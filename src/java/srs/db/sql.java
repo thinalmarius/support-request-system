@@ -3,15 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package db;
+package srs.db;
 
-import db.DBConc;
+import srs.db.DBConc;
+import srs.entity.Words;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static srs.db.DBConc.logger;
+import srs.log.DbLogger;
 
 
 
@@ -23,6 +29,7 @@ public class sql {
     
     static Connection conn=null;
     static Statement st=null;
+    static Logger logger = DbLogger.setup();
     
     public static String getpwd(String name){
         ResultSet rs = null;
@@ -38,7 +45,9 @@ public class sql {
                 pswd=rs.getString("password");
             }
         }catch(SQLException e){
-            //System.out.println(e);
+            logger.log(Level.SEVERE, "SQL Communication Failure", e);
+            logger.log(Level.WARNING, null, e);
+            logger.log(Level.INFO, null, e);
         } 
         
         
@@ -54,10 +63,24 @@ public class sql {
             st=conn.createStatement();
             rs=st.executeQuery(sql);
                         
-        }catch(SQLException e){}
+        }catch(SQLException e){
+            logger.log(Level.SEVERE, "SQL Communication Failure", e);
+            logger.log(Level.WARNING, null, e);
+            logger.log(Level.INFO, null, e);
+        }
         
         return rs;
        
+    }
+    public static void addUsr(String name, String pswd){
+        conn=DBConc.getConnection();
+        String sql="INSERT INTO user_role (`name`,`password`) \n"
+                +"VALUES ('"+name+"', '"+pswd+"')";
+        try{
+            st=conn.createStatement();
+            st.executeUpdate(sql);
+                        
+        }catch(SQLException e){}
     }
     
     public static Set<String> getStopwords(){
@@ -78,11 +101,32 @@ public class sql {
         return words;
     }
     
-    public static Set<String> getNewWords(){
+    public static ArrayList<Words> getNewWords(){
+        ResultSet rs=null;
+        ArrayList<Words> words = new ArrayList<Words>();
+        conn=DBConc.getConnection();
+        Words word = new Words();
+        String sql="SELECT words,score FROM learn_words";
+        try{
+            st=conn.createStatement();
+            rs=st.executeQuery(sql);
+            while(rs.next()){
+                word.setWord(rs.getString("words"));
+                word.setScore(rs.getInt("score"));
+                words.add(word);
+            }
+                        
+        }catch(SQLException e){}
+        
+        
+        return words;
+    }
+    
+    public static Set<String> excludeList(){
         ResultSet rs=null;
         Set<String> words = new HashSet<String>();
         conn=DBConc.getConnection();
-        String sql="SELECT words FROM learn_words";
+        String sql="SELECT words FROM exclude_list";
         try{
             st=conn.createStatement();
             rs=st.executeQuery(sql);
@@ -140,6 +184,17 @@ public class sql {
             
         }catch(SQLException e){}
         return rs;
+    }
+    
+    public static void addCustomer(String name, String email, String company){
+        conn=DBConc.getConnection();
+        String sql="INSERT INTO customers (name, email, company) \n"
+                +"VALUES ('"+name+"', '"+email+"', '"+company+"')";
+        try{
+            st=conn.createStatement();
+            st.executeUpdate(sql);
+            
+        }catch(SQLException e){}
     }
     
 }

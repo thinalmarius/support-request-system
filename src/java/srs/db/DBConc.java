@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package db;
+package srs.db;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import srs.log.DbLogger;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,8 +35,10 @@ public class DBConc {
     static String username;
     static String password;
     
-    /*public static void main(String args[]) throws SQLException, IOException, ParserConfigurationException, XPathExpressionException, SAXException, ClassNotFoundException{
-        getValues();
+    static Logger logger = DbLogger.setup();
+    
+    /*public static void main(String args[]){
+        getConnection();
     }*/
     
     public static Connection getConnection(){
@@ -52,32 +55,25 @@ public class DBConc {
             Class.forName(driver);      
             conn = DriverManager.getConnection(url,username, password);
             
-        }catch (IOException e){            
+            
+        }catch (IOException e){
+            logger.log(Level.SEVERE, null, e);
         }catch (SAXException ex) {
-            Logger.getLogger(DBConc.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(DBConc.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(DBConc.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DBConc.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(DBConc.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "SQL Communication Failure", ex);
+            
         }
-        return conn;
         //System.out.println(url+username);
+        return conn;
+        
     }
     
-    /*public static Connection getConnection() throws SQLException, IOException, ParserConfigurationException, XPathExpressionException, SAXException{
-        getValues();
-        try{
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(url,username, password);
-            
-        }catch (ClassNotFoundException e){}
-        System.out.println(url+driver+username);
-    return conn;
-    }*/
-
-    
+        
 }
