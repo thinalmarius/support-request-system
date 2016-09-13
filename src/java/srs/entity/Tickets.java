@@ -11,11 +11,30 @@ package srs.entity;
  */
 public class Tickets {
     
+    private int id;
     private String cusName;
     private String cusEmaill;
     private String probArea;
     private String severity;
     private String date;
+
+    
+    public Tickets(int id, String cusName, String cusEmaill, String probArea, String severity, String date) {
+        this.id = id;
+        this.cusName = cusName;
+        this.cusEmaill = cusEmaill;
+        this.probArea = probArea;
+        this.severity = severity;
+        this.date = date;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public int getId() {
+        return id;
+    }
     
     public void setName(String name){
         this.cusName=name;

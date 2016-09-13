@@ -5,7 +5,6 @@
  */
 package datalayer;
 
-import java.util.Date;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -17,8 +16,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.jws.Oneway;
+import srs.entity.Customers;
+import srs.entity.Users;
 /**
  *
  * @author Thinal
@@ -42,22 +47,21 @@ public class datalink {
     
     @WebMethod(operationName = "getuser")
     public ArrayList<String> getuser() {
-        ResultSet rs=sql.getusr();
-        ArrayList<String> users = new ArrayList<String>();
-        try{
-            while(rs.next()){
-                users.add(rs.getString("name"));
-            }
-        }catch(SQLException e){}
+        List<Users> user=sql.getusr();
+        ArrayList<String> username = new ArrayList<String>();
+        
+        for(Users users: user){
+            username.add(users.getName());
+        }
             
         //System.out.println(pswd);
-        return users;
+        return username;
     }
     
     
     @WebMethod(operationName= "getCusId")
-    public int getCusId(@WebParam(name = "name") String name, @WebParam(name = "company") String company){
-        int id=sql.getCusId(name, company);
+    public int getCusId(@WebParam(name = "name") String name, @WebParam(name = "email") String email){
+        int id=sql.getCusId(name, email);
         return id;
     }
 
@@ -65,26 +69,23 @@ public class datalink {
      * Web service operation
      */
     @WebMethod(operationName = "addTicket")
-    public void addTicket(@WebParam(name = "cus_id")int cus_id,@WebParam(name = "line") String line,@WebParam(name = "level")int level){
+    public int addTicket(@WebParam(name = "cus_id")int cus_id,@WebParam(name = "line") String line,@WebParam(name = "level")int level){
         sql.addNewTicket(cus_id, line, level);
+        int id=sql.selectLastTicket();
+        return id;
     }
     /**
      * Web service operation
      */
     @WebMethod(operationName = "viewTickets")
-    public ArrayList<Tickets> viewTickets() {
+    public List<Tickets> viewTickets() {
         ResultSet rs=sql.viewTickets();
-        Tickets ticket = new Tickets();
-        ArrayList<Tickets> tickets = new ArrayList<Tickets>(); 
+        List<Tickets> tickets = new LinkedList<>(); 
         try{
             while(rs.next()){
-                Tickets ticket1 = new Tickets();
-                ticket1.setName(rs.getString("name"));
-                ticket1.setEmail(rs.getString("email"));
-                ticket1.setProb(rs.getString("problem_area"));
-                ticket1.setSeverity(rs.getString("severity"));
-                ticket1.setDate(rs.getString("date"));
-                tickets.add(ticket1);
+                Tickets ticket = new Tickets(rs.getInt("id"),rs.getString("name"),rs.getString("email"),rs.getString("problem_area"),
+                rs.getString("severity"),rs.getString("date"));
+                tickets.add(ticket);
                 
             }
         }catch(SQLException e){}
@@ -143,13 +144,88 @@ public class datalink {
      * Web service operation
      */
     @WebMethod(operationName = "addUser")
-    public void addUser(@WebParam(name = "name") String name, @WebParam(name = "pswd") String pswd){
-        sql.addUsr(name, pswd);
+    public void addUser(@WebParam(name = "name") String name, @WebParam(name = "email") String email, @WebParam(name = "pswd") String pswd){
+        sql.addUsr(name, email, pswd);
+    }
+
+    
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "verifyCustomer")
+    public String verifyCustomer(@WebParam(name = "id") int id) {
+        String name = sql.verifyCus(id);
+        return name;
     }
 
     /**
      * Web service operation
      */
+    @WebMethod(operationName = "getHardwareCategory")
+    public ArrayList<String> getHardwareCategory() {
+        ArrayList<String> hardware = new ArrayList<String>();
+        ResultSet result=sql.getHardware();
+        try {
+            while(result.next()){
+                hardware.add(result.getString("words"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(datalink.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return hardware;
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "getSoftwareCategory")
+    public ArrayList<String> getSoftwareCategory() {
+        ArrayList<String> software = new ArrayList<String>();
+        ResultSet result=sql.getSoftware();
+        try {
+            while(result.next()){
+                software.add(result.getString("words"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(datalink.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return software;
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "deleteTicket")
+    @Oneway
+    public void deleteTicket(@WebParam(name = "id") int id) {
+        sql.deleteTicket(id);
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "viewCustomers")
+    public List<Customers> viewCustomers() {
+        List<Customers> cus = new LinkedList<>();
+        cus= sql.viewCustomers();
+        return cus;
+        
+    }
+    @WebMethod(operationName = "deleteCustomer")
+    public void deleteCustomer(int id){
+        sql.deleteCustomer(id);
+    }
     
-    
+    @WebMethod(operationName = "deleteUser")
+    public void deleteUser(int id){
+        sql.deleteUser(id);
+    }
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "viewUsers")
+    public List<Users> viewUsers() {
+        return sql.getusr();
+    }
 }
