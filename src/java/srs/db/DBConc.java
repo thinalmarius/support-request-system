@@ -70,7 +70,7 @@ public class DBConc {
             logger.log(Level.SEVERE, "SQL Communication Failure", ex);
             
         }
-        //System.out.println(url+username);
+        //System.out.println(conn);
         return conn;
         
     }

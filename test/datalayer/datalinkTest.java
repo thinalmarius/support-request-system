@@ -5,7 +5,10 @@
  */
 package datalayer;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.junit.After;
@@ -14,6 +17,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import srs.db.sql;
 import srs.entity.Customers;
 import srs.entity.Tickets;
 import srs.entity.Users;
@@ -50,13 +54,13 @@ public class datalinkTest {
     @Test
     public void testGetPassword() {
         System.out.println("getPassword");
-        String name = "";
+        String name = "admin";
         datalink instance = new datalink();
-        String expResult = "";
+        String expResult = "admin";
         String result = instance.getPassword(name);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -66,11 +70,13 @@ public class datalinkTest {
     public void testGetuser() {
         System.out.println("getuser");
         datalink instance = new datalink();
-        ArrayList<String> expResult = null;
+        ArrayList<String> expResult = new ArrayList<String>();
+        expResult.add("admin");
+        expResult.add("user");
         ArrayList<String> result = instance.getuser();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -79,14 +85,14 @@ public class datalinkTest {
     @Test
     public void testGetCusId() {
         System.out.println("getCusId");
-        String name = "";
-        String email = "";
+        String name = "Thinal Marius";
+        String email = "thinal.marius@gmail.com";
         datalink instance = new datalink();
-        int expResult = 0;
+        int expResult = 2;
         int result = instance.getCusId(name, email);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -95,15 +101,15 @@ public class datalinkTest {
     @Test
     public void testAddTicket() {
         System.out.println("addTicket");
-        int cus_id = 0;
-        String line = "";
-        int level = 0;
+        int cus_id = 2;
+        String line = "test failed";
+        int level = 1;
         datalink instance = new datalink();
-        int expResult = 0;
+        int expResult = 2;
         int result = instance.addTicket(cus_id, line, level);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -113,11 +119,20 @@ public class datalinkTest {
     public void testViewTickets() {
         System.out.println("viewTickets");
         datalink instance = new datalink();
-        List<Tickets> expResult = null;
+        ResultSet rs = sql.viewTickets();
+        List<Tickets> expResult = new LinkedList<>();
+        try{
+            while(rs.next()){
+                Tickets ticket = new Tickets(rs.getInt("id"),rs.getString("name"),rs.getString("email"),rs.getString("problem_area"),
+                rs.getString("severity"),rs.getString("date"));
+                expResult.add(ticket);
+            }
+        }catch(SQLException e){}
+        
         List<Tickets> result = instance.viewTickets();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -131,7 +146,7 @@ public class datalinkTest {
         Set<String> result = instance.getStopWords();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -145,7 +160,7 @@ public class datalinkTest {
         ArrayList<Words> result = instance.getNewWords();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -159,7 +174,7 @@ public class datalinkTest {
         Set<String> result = instance.excludeList();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -176,7 +191,7 @@ public class datalinkTest {
         int result = instance.addCustomer(name, email, company);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -189,7 +204,7 @@ public class datalinkTest {
         datalink instance = new datalink();
         instance.getLearnWords(learnWords);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -198,13 +213,14 @@ public class datalinkTest {
     @Test
     public void testAddUser() {
         System.out.println("addUser");
-        String name = "";
-        String email = "";
-        String pswd = "";
+        String name = "user";
+        String email = "user@user.com";
+        String pswd = "user";
+        String username = "";
         datalink instance = new datalink();
-        instance.addUser(name, email, pswd);
+        instance.addUser(name, username, email, pswd);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -213,13 +229,13 @@ public class datalinkTest {
     @Test
     public void testVerifyCustomer() {
         System.out.println("verifyCustomer");
-        int id = 0;
+        int id = 2;
         datalink instance = new datalink();
-        String expResult = "";
+        String expResult = "Thinal Cooray";
         String result = instance.verifyCustomer(id);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -233,7 +249,7 @@ public class datalinkTest {
         ArrayList<String> result = instance.getHardwareCategory();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -247,7 +263,7 @@ public class datalinkTest {
         ArrayList<String> result = instance.getSoftwareCategory();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -260,7 +276,7 @@ public class datalinkTest {
         datalink instance = new datalink();
         instance.deleteTicket(id);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -274,7 +290,7 @@ public class datalinkTest {
         List<Customers> result = instance.viewCustomers();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -287,7 +303,7 @@ public class datalinkTest {
         datalink instance = new datalink();
         instance.deleteCustomer(id);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -300,7 +316,7 @@ public class datalinkTest {
         datalink instance = new datalink();
         instance.deleteUser(id);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -313,8 +329,7 @@ public class datalinkTest {
         List<Users> expResult = null;
         List<Users> result = instance.viewUsers();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
     
 }

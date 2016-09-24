@@ -36,7 +36,7 @@ public class sql {
     public static String getpwd(String name){
         ResultSet rs = null;
         String pswd = null; 
-        String sql="SELECT password FROM user_role WHERE name='"+name+"'";
+        String sql="SELECT password FROM user_role WHERE username='"+name+"'";
         //DBConc connection = new DBConc();
         conn=DBConc.getConnection();
         try{
@@ -67,7 +67,7 @@ public class sql {
             st=conn.createStatement();
             rs=st.executeQuery(sql);
             while(rs.next()){
-                Users users = new Users(rs.getInt("id"), rs.getString("name"), rs.getString("email"), rs.getString("password"));
+                Users users = new Users(rs.getInt("id"), rs.getString("name"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
                 user.add(users);
             }
                         
@@ -80,10 +80,10 @@ public class sql {
         return user;
        
     }
-    public static void addUsr(String name, String email, String pswd){
+    public static void addUsr(String name, String username, String email, String pswd){
         conn=DBConc.getConnection();
-        String sql="INSERT INTO user_role (`name`,`email`,`password`) \n"
-                +"VALUES ('"+name+"', '"+email+"', '"+pswd+"')";
+        String sql="INSERT INTO user_role (`name`,`username`,`email`,`password`) \n"
+                +"VALUES ('"+name+"','"+username+"','"+email+"', '"+pswd+"')";
         try{
             st=conn.createStatement();
             st.executeUpdate(sql);

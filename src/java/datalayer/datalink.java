@@ -51,7 +51,7 @@ public class datalink {
         ArrayList<String> username = new ArrayList<String>();
         
         for(Users users: user){
-            username.add(users.getName());
+            username.add(users.getUsername());
         }
             
         //System.out.println(pswd);
@@ -144,8 +144,8 @@ public class datalink {
      * Web service operation
      */
     @WebMethod(operationName = "addUser")
-    public void addUser(@WebParam(name = "name") String name, @WebParam(name = "email") String email, @WebParam(name = "pswd") String pswd){
-        sql.addUsr(name, email, pswd);
+    public void addUser(@WebParam(name = "name") String name, String username, @WebParam(name = "email") String email, @WebParam(name = "pswd") String pswd){
+        sql.addUsr(name, username, email, pswd);
     }
 
     

@@ -80,7 +80,8 @@ public class sqlTest {
         String name = "";
         String email = "";
         String pswd = "";
-        sql.addUsr(name, email, pswd);
+        String username = "";
+        sql.addUsr(name, username, email, pswd);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
